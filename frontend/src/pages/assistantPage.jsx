@@ -20,7 +20,7 @@ export default function AssistantPage() {
         setMessages((current) => [...current, userMessage])
         try {
             const response = await axios.post('/api/assistant', { question: trimmed });
-            console.log('Message sent successfully:', response.data);
+            console.log('Message sent successfully:', response.data.filter);
         } catch (error) {
             console.error('Error sending message:', error)
         }
