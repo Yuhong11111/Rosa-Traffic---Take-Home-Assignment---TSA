@@ -1,5 +1,7 @@
+import json
 import re
 from fastapi import APIRouter, HTTPException
+from pydantic import ValidationError
 from ..models.aiModel import (
     AssistantRequest,
     AssistantResponse,
@@ -8,6 +10,8 @@ from ..models.aiModel import (
 )
 
 router = APIRouter()
+
+VALID_OPERATORS = {"==", "!=", ">", "<", ">=", "<=", "contains", "between"}
 
 
 def build_mock_filter(question: str) -> FilterObject:
@@ -44,15 +48,6 @@ def build_mock_filter(question: str) -> FilterObject:
         lane_value = lane_match.group(1)
         conditions.append(
             FilterCondition(field="Lane", operator="==", value=lane_value)
-        ) 
-
-    # Time filters
-    # (This is a simplified example; real implementation would need robust date parsing)
-    time_match = re.search(r"after\s*([\d-]+)", question_lower)
-    if time_match:
-        time_value = time_match.group(1)
-        conditions.append(
-            FilterCondition(field="Timestamp", operator=">", value=time_value)
         )
 
     # Determine operation
@@ -68,14 +63,65 @@ def build_mock_filter(question: str) -> FilterObject:
 
     # Sorting instructions
     sort_by = None
+    sort_direction = None
     if "sorted by speed" in question_lower or "order by speed" in question_lower:
-        sort_by = "speed_kph"
+        sort_by = "Speed"
+        sort_direction = "descending"
 
     return FilterObject(
         conditions=conditions,
         operation=operation,
         sort_by=sort_by,
+        sort_direction=sort_direction,
     )
+
+
+def generate_mock_llm_response(question: str) -> str:
+    # get pydantic model and convert to python dict using model_dump
+    filter_payload = build_mock_filter(question).model_dump()
+    response = filter_payload
+    # convert to json string
+    return json.dumps(response)
+
+
+def validate_json(raw_response: str) -> FilterObject:
+    try:
+        data = json.loads(raw_response)
+    except json.JSONDecodeError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"LLM returned malformed JSON: {exc.msg}",
+        ) from exc
+
+    if not isinstance(data, dict):
+        raise HTTPException(status_code=502, detail="LLM response must be a JSON object.")
+
+    conditions = data.get("conditions", [])
+    if not isinstance(conditions, list):
+        raise HTTPException(status_code=502, detail="'conditions' must be a list.")
+
+    for index, condition in enumerate(conditions):
+        # ensure condition has required keys
+        if not all(key in condition for key in ("field", "operator", "value")):
+            raise HTTPException(
+                status_code=502,
+                detail=f"Condition #{index + 1} missing required keys (field/operator/value).",
+            )
+        operator = condition["operator"]
+        # ensure operator is valid
+        if operator not in VALID_OPERATORS:
+            raise HTTPException(
+                status_code=502,
+                detail=f"Condition #{index + 1} contains invalid operator '{operator}'.",
+            )
+
+    try:
+        return FilterObject(**data)
+    except ValidationError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Filter validation failed: {exc.errors()}",
+        ) from exc
 
 
 @router.post("/api/assistant", response_model=AssistantResponse)
@@ -84,14 +130,11 @@ async def assistant_endpoint(payload: AssistantRequest):
     if not question:
         raise HTTPException(status_code=400, detail="Question cannot be empty.")
 
-    filter_object = build_mock_filter(question)
-    message = (
-        "Structured JSON filter generated from query."
-        if filter_object.conditions
-        else "Structured JSON filter created without specific conditions."
-    )
+    # Mock LLM response generation
+    raw_response = generate_mock_llm_response(question)
+    # Validate and parse the response
+    filter_object = validate_json(raw_response)
 
     return AssistantResponse(
-        message=message,
         filter=filter_object,
     )

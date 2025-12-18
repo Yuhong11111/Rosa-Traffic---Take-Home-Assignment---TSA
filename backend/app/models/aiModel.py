@@ -16,8 +16,8 @@ class FilterObject(BaseModel):
     conditions: List[FilterCondition] = Field(default_factory=list)
     operation: Optional[str] = None
     sort_by: Optional[str] = None
+    sort_direction: Optional[str] = None
 
 
 class AssistantResponse(BaseModel):
-    message: str
     filter: FilterObject
