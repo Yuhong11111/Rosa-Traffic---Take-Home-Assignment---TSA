@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import axios from 'axios'
 
 export default function AssistantPage() {
     const [query, setQuery] = useState('')
@@ -9,20 +10,26 @@ export default function AssistantPage() {
         },
     ])
 
-    const handleSubmit = (event) => {
+    async function handleSubmit(event) {
         event.preventDefault()
         const trimmed = query.trim()
         if (!trimmed) {
             return
         }
-
         const userMessage = { role: 'user', content: trimmed }
+        setMessages((current) => [...current, userMessage])
+        try {
+            const response = await axios.post('/api/assistant', { question: trimmed });
+            console.log('Message sent successfully:', response.data);
+        } catch (error) {
+            console.error('Error sending message:', error)
+        }
         const mockAiMessage = {
             role: 'ai',
             content: `AI (mock): I'm still in training, but I heard "${trimmed}".`,
         }
 
-        setMessages((current) => [...current, userMessage, mockAiMessage])
+        setMessages((current) => [...current, mockAiMessage])
         setQuery('')
     }
 
