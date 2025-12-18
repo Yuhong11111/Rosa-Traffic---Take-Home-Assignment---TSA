@@ -1,42 +1,110 @@
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1a202c;
+}
+
+body {
+  margin: 0;
+  background: #fff;
+}
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.assistant-page {
+  width: 100%;
+  max-width: none;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.assistant-layout {
+  display: flex;
+  width: 100%;
+  gap: 16px;
+  height: 100%;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.assistant-box,
+.result-box {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #dcdfe4;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fff;
+  height: calc(100vh - 40px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
-.card {
-  padding: 2em;
+.assistant-header h1 {
+  margin: 0 0 4px;
+  font-size: 1.25rem;
 }
 
-.read-the-docs {
-  color: #888;
+.assistant-header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.messages {
+  margin: 16px 0;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.message.user {
+  align-self: flex-end;
+  background: #eef2ff;
+}
+
+.query-form {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.result-box h2 {
+  margin-top: 0;
+}
+
+.result-box p {
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.query-input {
+  flex: 1;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.query-button {
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #fff;
+  border-radius: 6px;
+  padding: 0 16px;
+  font-size: 1rem;
+  cursor: pointer;
 }
