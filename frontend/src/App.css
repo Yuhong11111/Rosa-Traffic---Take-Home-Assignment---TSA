@@ -161,3 +161,32 @@ body {
   border: 1px dashed #dcdfe4;
   border-radius: 6px;
 }
+
+.sql-section {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #f8fafc;
+  border: 1px solid #dcdfe4;
+  border-radius: 6px;
+}
+
+.sql-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.sql-query {
+  margin: 0;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  overflow-x: auto;
+  color: #374151;
+  font-family: 'Courier New', monospace;
+  line-height: 1.4;
+}

@@ -9,6 +9,7 @@ from ..models.aiModel import (
     FilterObject,
 )
 from ..services.filter_engine import process_filter
+from ..services.sql_engine import generate_sql_query
 
 router = APIRouter()
 
@@ -73,10 +74,17 @@ def build_mock_filter(question: str) -> FilterObject:
         sort_by = "Speed"
     elif "sorted by lane" in question_lower or "order by lane" in question_lower:
         sort_by = "Lane"
+    elif "sorted by time" in question_lower or "order by time" in question_lower or "sorted by collection" in question_lower:
+        sort_by = "CollectionTime"
+    
     if "ascending" in question_lower or "from lowest to highest" in question_lower:
         sort_direction = "ascending"
     elif "descending" in question_lower or "from highest to lowest" in question_lower:
         sort_direction = "descending"
+    else:
+        # Default to ascending if sorting is mentioned but no direction specified
+        if sort_by:
+            sort_direction = "ascending"
 
     return FilterObject(
         conditions=conditions,
@@ -151,10 +159,14 @@ async def assistant_endpoint(payload: AssistantRequest):
     # Validate and parse the response
     filter_object = validate_json(raw_response)
     
+    # Generate SQL query for demonstation only
+    sql_query = generate_sql_query(filter_object)
+    
     # Process the filter and get the result
     result = process_filter(filter_object)
 
     return AssistantResponse(
         # filter=filter_object,
         result=result,
+        sql=sql_query,
     )

@@ -138,4 +138,4 @@ def process_filter(filter_object: FilterObject) -> Any:
     # Execute operation and return response
     result = execute_operation(filtered_records, filter_object.operation)
     
-    return result 
+    return result

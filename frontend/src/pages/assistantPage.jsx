@@ -10,6 +10,7 @@ export default function AssistantPage() {
         },
     ])
     const [result, setResult] = useState(null)
+    const [sql, setSql] = useState(null)
 
     async function handleSubmit(event) {
         event.preventDefault()
@@ -22,7 +23,9 @@ export default function AssistantPage() {
         try {
             const response = await axios.post('/api/assistant', { question: trimmed });
             const data = response.data.result;
+            const sqlQuery = response.data.sql;
             setResult(data);
+            setSql(sqlQuery);
 
             // Format the result for display
             let aiResponse = ''
@@ -104,6 +107,12 @@ export default function AssistantPage() {
 
                 <section className="result-box">
                     <h2>Results</h2>
+                    {sql && (
+                        <div className="sql-section">
+                            <div className="sql-label">Generated SQL</div>
+                            <pre className="sql-query">{sql}</pre>
+                        </div>
+                    )}
                     {result ? (
                         <div className="result-content">
                             {typeof result === 'object' && result !== null ? (

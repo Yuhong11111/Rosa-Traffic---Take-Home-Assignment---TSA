@@ -22,3 +22,4 @@ class FilterObject(BaseModel):
 class AssistantResponse(BaseModel):
     # filter: FilterObject
     result: Any = None
+    sql: Optional[str] = None  # Generated SQL query for transparency
