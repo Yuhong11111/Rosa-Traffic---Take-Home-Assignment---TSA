@@ -49,9 +49,16 @@ export default function AssistantPage() {
             setMessages((current) => [...current, mockAiMessage])
         } catch (error) {
             console.error('Error sending message:', error)
+            let errorDetail = error.message
+
+            // Extract error detail from Axios response
+            if (error.response && error.response.data && error.response.data.detail) {
+                errorDetail = error.response.data.detail
+            }
+
             const errorMessage = {
                 role: 'ai',
-                content: `Sorry, there was an error processing your request: ${error.message}`,
+                content: `Sorry, there was an error: ${errorDetail}`,
             }
             setMessages((current) => [...current, errorMessage])
         }

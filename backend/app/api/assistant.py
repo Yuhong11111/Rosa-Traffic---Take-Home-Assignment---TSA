@@ -62,6 +62,10 @@ def build_mock_filter(question: str) -> FilterObject:
     elif "list" in question_lower or "show me" in question_lower:
         operation = "list_vehicles"
 
+    # Check if there are conditions or operation early
+    if not conditions and not operation:
+        raise ValueError("Question must include at least one filter condition or an operation (count, average, max, list).")
+
     # Sorting instructions
     sort_by = None
     sort_direction = None
@@ -91,7 +95,6 @@ def generate_mock_llm_response(question: str) -> str:
     return json.dumps(response)
 
 
-# validate LLM JSON response and convert to FilterObject
 def validate_json(raw_response: str) -> FilterObject:
     try:
         data = json.loads(raw_response)
@@ -139,7 +142,12 @@ async def assistant_endpoint(payload: AssistantRequest):
         raise HTTPException(status_code=400, detail="Question cannot be empty.")
 
     # Mock LLM response generation
-    raw_response = generate_mock_llm_response(question)
+    try:
+        raw_response = generate_mock_llm_response(question)
+    except ValueError as exc:
+        # Catch early validation from build_mock_filter
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    
     # Validate and parse the response
     filter_object = validate_json(raw_response)
     
