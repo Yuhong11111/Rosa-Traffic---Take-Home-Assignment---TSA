@@ -36,6 +36,7 @@ pip install -r requirements.txt
 
 # run the server
 uvicorn app.main:app --reload --port 8000
+```
 
 ### Running Tests
 
