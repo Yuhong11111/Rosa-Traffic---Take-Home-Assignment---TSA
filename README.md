@@ -23,9 +23,19 @@ The dev server prints a local URL (default `http://localhost:5173`). Open it in 
 
 ```bash
 cd backend
-source .venv/bin/activate  # or .venv\\Scripts\\activate on Windows
+
+# create virtual environment (first time only)
+python3 -m venv .venv
+
+# activate it
+source .venv/bin/activate   # macOS / Linux
+# .venv\Scripts\activate    # Windows
+
+# install dependencies
+pip install -r requirements.txt
+
+# run the server
 uvicorn app.main:app --reload --port 8000
-```
 
 ### Running Tests
 
@@ -36,6 +46,8 @@ python -m unittest discover backend/tests -t backend
 ```
 
 This runs the assistant, filter engine, and SQL engine unit tests.
+
+---
 
 ## Design Choices
 
