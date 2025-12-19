@@ -8,7 +8,7 @@ from ..models.aiModel import (
     FilterCondition,
     FilterObject,
 )
-# we commented out the python filter engine
+# Commented out the python filter engine
 # from ..services.filter_engine import process_filter
 from ..services.sql_engine import generate_sql_query, execute_sql_query
 
@@ -17,8 +17,10 @@ router = APIRouter()
 VALID_OPERATORS = {"==", "!=", ">", "<", ">=", "<="}
 
 
-# Mock the behavior of an LLM by extracting structured filters from natural language.
 def build_mock_filter(question: str) -> FilterObject:
+    # For production: replace this heuristic with a real LLM call that emits the
+    # structured filter JSON described in docs/llm_integration.md, then validate
+    # with validate_json before processing.
     question_lower = question.lower()
     conditions = []
 
@@ -99,9 +101,8 @@ def build_mock_filter(question: str) -> FilterObject:
 def generate_mock_llm_response(question: str) -> str:
     # get pydantic model and convert to python dict using model_dump
     filter_payload = build_mock_filter(question).model_dump()
-    response = filter_payload
     # convert to json string
-    return json.dumps(response)
+    return json.dumps(filter_payload)
 
 
 def validate_json(raw_response: str) -> FilterObject:
