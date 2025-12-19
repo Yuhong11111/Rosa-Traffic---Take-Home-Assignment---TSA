@@ -88,9 +88,12 @@ def execute_sql_query(sql_query: str) -> Dict[str, Any]:
         # Convert rows to dictionaries
         columns = [description[0] for description in cursor.description]
         data = [dict(zip(columns, row)) for row in result]
-        
+
+        # If this was an aggregate (count/avg/max), return a single dict instead of a list
+        if len(data) == 1 and len(columns) == 1:
+            return data[0]
+
         return data
     
     finally:
         conn.close()
-
