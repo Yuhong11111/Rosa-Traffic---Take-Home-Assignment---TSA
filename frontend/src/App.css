@@ -10,38 +10,26 @@ body {
 
 #root {
   min-height: 100vh;
-  display: flex;
-  justify-content: stretch;
-  align-items: stretch;
-  padding: 0;
+  padding: 20px;
   box-sizing: border-box;
 }
 
 .assistant-page {
   width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
 .assistant-layout {
   display: flex;
-  width: 100%;
-  height: 100%;
   gap: 16px;
-  padding: 20px;
-  box-sizing: border-box;
-  min-width: 0;
+  width: 100%;
+  height: calc(100vh - 40px);
 }
 
 .assistant-box,
 .result-box {
-  flex: 0 0 50%;
-  max-width: 50%;
-  width: 50%;
-  flex-shrink: 0;
+  flex: 0 0 calc((100% - 16px) / 2);
+  max-width: calc((100% - 16px) / 2);
   min-width: 0;
-  min-height: 0;
   border: 1px solid #dcdfe4;
   border-radius: 8px;
   padding: 16px;
@@ -49,6 +37,7 @@ body {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .assistant-header h1 {
@@ -89,19 +78,6 @@ body {
   margin-top: auto;
 }
 
-.result-box h2 {
-  margin-top: 0;
-  word-break: break-word;
-  min-width: 0;
-}
-
-.result-box p {
-  color: #4b5563;
-  line-height: 1.5;
-  word-break: break-word;
-  min-width: 0;
-}
-
 .query-input {
   flex: 1;
   border: 1px solid #d1d5db;
@@ -121,18 +97,25 @@ body {
   cursor: pointer;
 }
 
+.result-box h2 {
+  margin-top: 0;
+}
+
+.result-box p {
+  color: #4b5563;
+  line-height: 1.5;
+}
+
 .result-content {
   flex: 1;
   width: 100%;
-  overflow-y: auto;
   overflow-x: auto;
-  min-width: 0;
+  overflow-y: auto;
   min-height: 0;
 }
 
 .result-table {
   width: 100%;
-  max-width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -145,36 +128,21 @@ body {
 }
 
 .result-stats {
-  display: table;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  min-width: 0;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .stat-item {
-  display: table-row;
-  word-break: break-word;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.stat-item strong {
-  display: table-cell;
+  width: 100%;
   padding: 8px;
-  border: 1px solid #dcdfe4;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #f9fafb;
+  box-sizing: border-box;
   word-break: break-word;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.stat-item strong::after {
-  content: '';
-}
-
-.stat-item strong {
-  display: block;
-  word-break: break-word;
-  min-width: 0;
-  overflow: hidden;
 }

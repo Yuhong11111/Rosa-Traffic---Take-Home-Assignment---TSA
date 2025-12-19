@@ -5,7 +5,7 @@ from ..models.aiModel import FilterObject, FilterCondition
 
 
 def load_traffic_data() -> List[Dict[str, Any]]:
-    """Load traffic data from CSV file."""
+    # Load traffic data from CSV file.
     data_path = Path(__file__).parent.parent / "data" / "traffic.csv"
     
     records = []
@@ -24,7 +24,7 @@ def load_traffic_data() -> List[Dict[str, Any]]:
 
 
 def apply_filter_conditions(records: List[Dict[str, Any]], conditions: List[FilterCondition]) -> List[Dict[str, Any]]:
-    """Filter records based on conditions."""
+    # Filter records based on conditions.
     filtered_records = records
     
     for condition in conditions:
@@ -67,7 +67,7 @@ def apply_filter_conditions(records: List[Dict[str, Any]], conditions: List[Filt
 
 
 def apply_sorting(records: List[Dict[str, Any]], sort_by: str, sort_direction: str = "ascending") -> List[Dict[str, Any]]:
-    """Sort records based on sort_by field and direction."""
+    # Sort records based on sort_by field and direction。
     if not sort_by:
         return records
     
@@ -82,7 +82,7 @@ def apply_sorting(records: List[Dict[str, Any]], sort_by: str, sort_direction: s
 
 
 def execute_operation(records: List[Dict[str, Any]], operation: str) -> Any:
-    """Execute the specified operation on filtered records."""
+    # Execute the specified operation on filtered records.
     if not operation or operation == "list_vehicles":
         # Return the filtered records
         return records

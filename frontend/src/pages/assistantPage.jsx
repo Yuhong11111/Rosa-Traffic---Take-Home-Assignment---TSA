@@ -122,13 +122,22 @@ export default function AssistantPage() {
                                         </tbody>
                                     </table>
                                 ) : (
-                                    <div className="result-stats">
-                                        {Object.entries(result).map(([key, value]) => (
-                                            <div key={key} className="stat-item">
-                                                <strong>{key.replace(/_/g, ' ')}:</strong> {value}
-                                            </div>
-                                        ))}
-                                    </div>
+                                    <table className="result-table result-summary-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Metric</th>
+                                                <th>Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {Object.entries(result).map(([key, value]) => (
+                                                <tr key={key}>
+                                                    <td>{key.replace(/_/g, ' ')}</td>
+                                                    <td>{String(value)}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 )
                             ) : (
                                 <p>{result}</p>
