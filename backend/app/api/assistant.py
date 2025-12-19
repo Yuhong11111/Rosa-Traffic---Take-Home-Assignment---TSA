@@ -15,8 +15,8 @@ router = APIRouter()
 VALID_OPERATORS = {"==", "!=", ">", "<", ">=", "<="}
 
 
+# Mock the behavior of an LLM by extracting structured filters from natural language.
 def build_mock_filter(question: str) -> FilterObject:
-    """Mock the behavior of an LLM by deriving a structured filter from heuristics."""
     question_lower = question.lower()
     conditions = []
 
@@ -67,6 +67,8 @@ def build_mock_filter(question: str) -> FilterObject:
     sort_direction = None
     if "sorted by speed" in question_lower or "order by speed" in question_lower:
         sort_by = "Speed"
+    elif "sorted by lane" in question_lower or "order by lane" in question_lower:
+        sort_by = "Lane"
     if "ascending" in question_lower or "from lowest to highest" in question_lower:
         sort_direction = "ascending"
     elif "descending" in question_lower or "from highest to lowest" in question_lower:
@@ -80,6 +82,7 @@ def build_mock_filter(question: str) -> FilterObject:
     )
 
 
+# mimic LLM response generation(JSON format)
 def generate_mock_llm_response(question: str) -> str:
     # get pydantic model and convert to python dict using model_dump
     filter_payload = build_mock_filter(question).model_dump()
@@ -88,6 +91,7 @@ def generate_mock_llm_response(question: str) -> str:
     return json.dumps(response)
 
 
+# validate LLM JSON response and convert to FilterObject
 def validate_json(raw_response: str) -> FilterObject:
     try:
         data = json.loads(raw_response)

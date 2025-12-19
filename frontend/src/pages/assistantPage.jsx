@@ -146,7 +146,7 @@ export default function AssistantPage() {
                     ) : (
                         <p>
                             Placeholder area to display summaries, tables, or other AI output.
-                            Design this section however you like once real data is available.
+                            Current data is mocked locally. Future implementation will integrate with a backend AI.
                         </p>
                     )}
                 </section>
