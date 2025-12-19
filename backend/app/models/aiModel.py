@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Any
 from pydantic import BaseModel, Field
 
 
@@ -20,4 +20,5 @@ class FilterObject(BaseModel):
 
 
 class AssistantResponse(BaseModel):
-    filter: FilterObject
+    # filter: FilterObject
+    result: Any = None

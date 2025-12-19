@@ -11,33 +11,41 @@ body {
 #root {
   min-height: 100vh;
   display: flex;
-  justify-content: center;
+  justify-content: stretch;
   align-items: stretch;
-  padding: 20px;
+  padding: 0;
   box-sizing: border-box;
 }
 
 .assistant-page {
   width: 100%;
-  max-width: none;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .assistant-layout {
   display: flex;
   width: 100%;
-  gap: 16px;
   height: 100%;
+  gap: 16px;
+  padding: 20px;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .assistant-box,
 .result-box {
-  flex: 1;
+  flex: 0 0 50%;
+  max-width: 50%;
+  width: 50%;
+  flex-shrink: 0;
   min-width: 0;
+  min-height: 0;
   border: 1px solid #dcdfe4;
   border-radius: 8px;
   padding: 16px;
   background: #fff;
-  height: calc(100vh - 40px);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -83,11 +91,15 @@ body {
 
 .result-box h2 {
   margin-top: 0;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .result-box p {
   color: #4b5563;
   line-height: 1.5;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .query-input {
@@ -107,4 +119,62 @@ body {
   padding: 0 16px;
   font-size: 1rem;
   cursor: pointer;
+}
+
+.result-content {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+.result-table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.result-table th,
+.result-table td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #dcdfe4;
+}
+
+.result-stats {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  min-width: 0;
+}
+
+.stat-item {
+  display: table-row;
+  word-break: break-word;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.stat-item strong {
+  display: table-cell;
+  padding: 8px;
+  border: 1px solid #dcdfe4;
+  word-break: break-word;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.stat-item strong::after {
+  content: '';
+}
+
+.stat-item strong {
+  display: block;
+  word-break: break-word;
+  min-width: 0;
+  overflow: hidden;
 }

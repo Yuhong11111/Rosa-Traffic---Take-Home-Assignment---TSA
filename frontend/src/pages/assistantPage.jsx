@@ -9,6 +9,7 @@ export default function AssistantPage() {
             content: 'Welcome! Ask any question and a placeholder AI will respond.',
         },
     ])
+    const [result, setResult] = useState(null)
 
     async function handleSubmit(event) {
         event.preventDefault()
@@ -20,16 +21,40 @@ export default function AssistantPage() {
         setMessages((current) => [...current, userMessage])
         try {
             const response = await axios.post('/api/assistant', { question: trimmed });
-            console.log(response.data.filter);
+            const data = response.data.result;
+            setResult(data);
+
+            // Format the result for display
+            let aiResponse = ''
+            if (typeof data === 'object' && data !== null) {
+                if (data.count !== undefined) {
+                    aiResponse = `Found ${data.count} vehicle(s) matching your criteria.`
+                } else if (data.average_speed !== undefined) {
+                    aiResponse = `The average speed is ${data.average_speed} km/h.`
+                } else if (data.max_speed !== undefined) {
+                    aiResponse = `The maximum speed is ${data.max_speed} km/h.`
+                } else if (Array.isArray(data)) {
+                    aiResponse = `Found ${data.length} record(s). See details in the Results panel.`
+                } else {
+                    aiResponse = JSON.stringify(data)
+                }
+            } else {
+                aiResponse = `Result: ${data}`
+            }
+
+            const mockAiMessage = {
+                role: 'ai',
+                content: aiResponse,
+            }
+            setMessages((current) => [...current, mockAiMessage])
         } catch (error) {
             console.error('Error sending message:', error)
+            const errorMessage = {
+                role: 'ai',
+                content: `Sorry, there was an error processing your request: ${error.message}`,
+            }
+            setMessages((current) => [...current, errorMessage])
         }
-        const mockAiMessage = {
-            role: 'ai',
-            content: `AI (mock): I'm still in training, but I heard "${trimmed}".`,
-        }
-
-        setMessages((current) => [...current, mockAiMessage])
         setQuery('')
     }
 
@@ -72,10 +97,49 @@ export default function AssistantPage() {
 
                 <section className="result-box">
                     <h2>Results</h2>
-                    <p>
-                        Placeholder area to display summaries, tables, or other AI output.
-                        Design this section however you like once real data is available.
-                    </p>
+                    {result ? (
+                        <div className="result-content">
+                            {typeof result === 'object' && result !== null ? (
+                                Array.isArray(result) ? (
+                                    <table className="result-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Collection Time</th>
+                                                <th>Direction</th>
+                                                <th>Lane</th>
+                                                <th>Speed (km/h)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {result.map((record, index) => (
+                                                <tr key={index}>
+                                                    <td>{record.CollectionTime}</td>
+                                                    <td>{record.Direction}</td>
+                                                    <td>{record.Lane}</td>
+                                                    <td>{record.Speed}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                ) : (
+                                    <div className="result-stats">
+                                        {Object.entries(result).map(([key, value]) => (
+                                            <div key={key} className="stat-item">
+                                                <strong>{key.replace(/_/g, ' ')}:</strong> {value}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )
+                            ) : (
+                                <p>{result}</p>
+                            )}
+                        </div>
+                    ) : (
+                        <p>
+                            Placeholder area to display summaries, tables, or other AI output.
+                            Design this section however you like once real data is available.
+                        </p>
+                    )}
                 </section>
             </div>
         </div>

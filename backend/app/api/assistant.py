@@ -8,10 +8,11 @@ from ..models.aiModel import (
     FilterCondition,
     FilterObject,
 )
+from ..services.filter_engine import process_filter
 
 router = APIRouter()
 
-VALID_OPERATORS = {"==", "!=", ">", "<", ">=", "<=", "contains", "between"}
+VALID_OPERATORS = {"==", "!=", ">", "<", ">=", "<="}
 
 
 def build_mock_filter(question: str) -> FilterObject:
@@ -51,7 +52,7 @@ def build_mock_filter(question: str) -> FilterObject:
         )
 
     # Determine operation
-    operation = "filter"
+    operation = ""
     if "how many" in question_lower or "count" in question_lower:
         operation = "count_vehicles"
     elif "average" in question_lower:
@@ -66,6 +67,9 @@ def build_mock_filter(question: str) -> FilterObject:
     sort_direction = None
     if "sorted by speed" in question_lower or "order by speed" in question_lower:
         sort_by = "Speed"
+    if "ascending" in question_lower or "from lowest to highest" in question_lower:
+        sort_direction = "ascending"
+    elif "descending" in question_lower or "from highest to lowest" in question_lower:
         sort_direction = "descending"
 
     return FilterObject(
@@ -134,7 +138,11 @@ async def assistant_endpoint(payload: AssistantRequest):
     raw_response = generate_mock_llm_response(question)
     # Validate and parse the response
     filter_object = validate_json(raw_response)
+    
+    # Process the filter and get the result
+    result = process_filter(filter_object)
 
     return AssistantResponse(
-        filter=filter_object,
+        # filter=filter_object,
+        result=result,
     )
