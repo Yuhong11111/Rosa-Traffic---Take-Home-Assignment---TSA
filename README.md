@@ -28,3 +28,13 @@ uvicorn app.main:app --reload --port 8000
 ```
 
 The FastAPI app serves the health endpoint at `http://localhost:8000/health`.
+
+### Running Tests
+
+From the repo root (with your virtualenv active):
+
+```bash
+python -m unittest discover backend/tests -t backend
+```
+
+This runs the assistant, filter engine, and SQL engine unit tests.
