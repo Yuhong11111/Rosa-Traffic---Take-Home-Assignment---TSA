@@ -1,4 +1,7 @@
 from ..models.aiModel import FilterObject
+from .filter_engine import load_traffic_data
+import sqlite3
+from typing import Dict, Any
 
 
 def generate_sql_query(filter_object: FilterObject) -> str:
@@ -49,4 +52,45 @@ def generate_sql_query(filter_object: FilterObject) -> str:
         sql += f" {order_clause}"
     
     return sql
+
+
+#Execute SQL query against traffic data using SQLite.
+def execute_sql_query(sql_query: str) -> Dict[str, Any]:
+    # Load traffic data
+    records = load_traffic_data()
+    
+    # Create in-memory SQLite connection
+    conn = sqlite3.connect(":memory:")
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    try:
+        # Create table and insert records
+        cursor.execute("""
+            CREATE TABLE vehicles (
+                CollectionTime TEXT,
+                Direction TEXT,
+                Lane INTEGER,
+                Speed INTEGER
+            )
+        """)
+        
+        for record in records:
+            cursor.execute(
+                "INSERT INTO vehicles VALUES (?, ?, ?, ?)",
+                (record["CollectionTime"], record["Direction"], record["Lane"], record["Speed"])
+            )
+        
+        # Execute the query
+        cursor.execute(sql_query)
+        result = cursor.fetchall()
+        
+        # Convert rows to dictionaries
+        columns = [description[0] for description in cursor.description]
+        data = [dict(zip(columns, row)) for row in result]
+        
+        return data
+    
+    finally:
+        conn.close()
 

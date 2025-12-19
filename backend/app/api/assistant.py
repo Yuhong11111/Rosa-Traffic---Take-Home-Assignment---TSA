@@ -8,8 +8,9 @@ from ..models.aiModel import (
     FilterCondition,
     FilterObject,
 )
-from ..services.filter_engine import process_filter
-from ..services.sql_engine import generate_sql_query
+# we commented out the python filter engine
+# from ..services.filter_engine import process_filter
+from ..services.sql_engine import generate_sql_query, execute_sql_query
 
 router = APIRouter()
 
@@ -159,11 +160,14 @@ async def assistant_endpoint(payload: AssistantRequest):
     # Validate and parse the response
     filter_object = validate_json(raw_response)
     
-    # Generate SQL query for demonstation only
+    # Generate SQL query
     sql_query = generate_sql_query(filter_object)
     
-    # Process the filter and get the result
-    result = process_filter(filter_object)
+    # Execute SQL and get the result
+    result = execute_sql_query(sql_query)
+    
+    # Comment out Python filter engine result
+    # result = process_filter(filter_object)
 
     return AssistantResponse(
         # filter=filter_object,
