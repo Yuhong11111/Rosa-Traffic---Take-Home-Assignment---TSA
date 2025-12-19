@@ -49,13 +49,13 @@ The frontend communicates with the FastAPI backend using Axios with explicit COR
 A consistent schema (`FilterObject` and `FilterCondition`) is used to represent extracted queries. Pydantic enforces type safety and ensures malformed or incomplete JSON is caught before execution.
 
 **Simple, focused frontend**  
-The UI is intentionally minimal. Its purpose is to clearly demonstrate the flow from natural-language query → JSON → validated object → final result.
+The UI is intentionally minimal. Its purpose is to clearly demonstrate the query and result.
 
 **Mocked LLM with helper function**  
 Instead of calling a real LLM, I implemented a mocked LLM step that extracts keywords and generates a structured `FilterObject`. It detects:
-- direction keywords (“north”, “south”)
+- direction comparisons (“north”, “south”)
 - speed comparisons
-- lane references
+- lane comparisons
 - sorting requests
 - the appropriate operation (“list”, “count”, “average”, “max”, “min”)
 
@@ -76,10 +76,10 @@ This prevents invalid JSON from reaching the filter/aggregation logic.
 The system handles each query independently. This makes the pipeline simple and fast but prevents follow-up questions that rely on conversational context.
 
 **Mocked LLM instead of real LLM**  
-The mocked LLM captures only the patterns explicitly programmed. A real LLM would handle more natural phrasing, but mocking ensures deterministic behavior and eliminates the need for API keys.
+The mocked LLM captures only the patterns explicitly programmed. A real LLM would handle more natural phrasing, but mocking ensures deterministic behavior and eliminates the need for LLM API keys.
 
 **In-memory dataset**  
-The dataset is loaded from a CSV file into memory. This is sufficient for assignment scope but not optimal for large-scale or concurrent workloads.
+The dataset is loaded from a CSV file into memory. This is sufficient for this assignment scope but not optimal for large-scale or concurrent workloads.
 
 ---
 
@@ -99,7 +99,7 @@ The mocked LLM simulates the behavior of a real model:
 4. Passes it through validation  
 5. The backend executes the filter and returns formatted results
 
-This fully exercises the NL → JSON → validation → execution pipeline while remaining fully offline.
+This fully exercises the LLM → JSON → validation → execution pipeline.
 
 ---
 
@@ -108,14 +108,12 @@ This fully exercises the NL → JSON → validation → execution pipeline while
 I used ChatGPT as a reasoning and reference assistant to:
 
 - Set up and validate the development environment  
-- Clarify assignment requirements and correct workflow  
-- Design and refine the JSON schema and system prompt  
+- Clarify assignment requirements and correct workflow   
 - Assist with frontend sizing/layout issues  
-- Draft longer conditional patterns for mock LLM logic  
+- Draft longer conditional patterns for mock LLM logic
+- Suggest error-handling and validation strategies
+- Suggest an initial testing setup
 - Improve documentation clarity  
-- Suggest error-handling and validation strategies  
-
-All core implementation, structure, and logic were written manually.
 
 ---
 
@@ -125,7 +123,7 @@ All core implementation, structure, and logic were written manually.
 Add unit tests, edge-case tests, and integration tests with CI/CD.
 
 **Indexing or precomputation**  
-For larger datasets, introduce indexing (e.g., by direction or speed) to optimize filtering.
+For larger datasets, introduce indexing (e.g., by direction or lane) to optimize filtering.
 
 **Environment variable management (`.env`)**  
 Store future API keys, secrets, or JWT configurations securely.
